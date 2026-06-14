@@ -1,0 +1,230 @@
+# =============================================================
+# Procurement Radar - Configuration
+# Edit this file to change portals, keywords, recipients, schedule.
+# No coding knowledge needed - just edit the values.
+# =============================================================
+
+# -------------------------------------------------------------
+# EMAIL RECIPIENTS
+# Who receives the digest when relevant opportunities are found.
+# -------------------------------------------------------------
+email:
+  recipients:
+    - sly@levitan.com
+  from_name: "Procurement Radar"
+  from_email: "onboarding@resend.dev"   # see README: use onboarding@resend.dev to start, or a verified domain
+  subject_prefix: "Procurement Radar"
+
+# -------------------------------------------------------------
+# SCAN SETTINGS
+# How relevant something must be to trigger an email.
+# Options: High, Medium  (Low is always logged but never emailed)
+# -------------------------------------------------------------
+scan:
+  email_threshold: "Medium"     # email anything Medium or higher
+  min_contract_value: 50000     # flag if above this; include if value unknown
+
+# -------------------------------------------------------------
+# PORTALS TO MONITOR
+# Northeast states + ISOs. No federal (SAM.gov excluded).
+# enabled: true/false lets you turn portals on and off.
+# method: "playwright" for JavaScript-heavy sites, "requests" for simple HTML/RSS
+# -------------------------------------------------------------
+portals:
+
+  # ---- New England (6 states) ----
+  - name: "COMMBUYS (Massachusetts)"
+    state: "MA"
+    enabled: true
+    method: "playwright"
+    url: "https://www.commbuys.com/bso/view/search/external/advancedSearchBid.xhtml?openBids=true"
+
+  - name: "Connecticut DAS / BizNet"
+    state: "CT"
+    enabled: true
+    method: "playwright"
+    url: "https://portal.ct.gov/das/ctsource/bidboard?language=en_US"
+
+  - name: "Maine Division of Procurement Services"
+    state: "ME"
+    enabled: true
+    method: "requests"
+    url: "https://www.maine.gov/dafs/bbm/procurementservices/vendors/rfps"
+
+  - name: "New Hampshire NHFirst / Bid Opportunities"
+    state: "NH"
+    enabled: false   # Akamai CDN blocks all automated access
+    method: "playwright"
+    url: "https://apps.das.nh.gov/bidscontracts/bids.aspx"
+
+  - name: "Rhode Island Division of Purchases / Ocean State Procures"
+    state: "RI"
+    enabled: true
+    method: "playwright"
+    url: "https://ridop.ri.gov/vendors/bidding-opportunities"
+
+  - name: "Vermont Bid Opportunities"
+    state: "VT"
+    enabled: true
+    method: "playwright"
+    url: "https://www.vermontbusinessregistry.com/bidsearch.aspx?type=1"
+
+  # ---- Mid-Atlantic (NY, NJ, PA) ----
+  - name: "NYSTART / NYS Contract Reporter"
+    state: "NY"
+    enabled: true
+    method: "playwright"
+    url: "https://www.nyscr.ny.gov/Ads/Search"
+
+  - name: "NJSTART (New Jersey)"
+    state: "NJ"
+    enabled: true
+    method: "playwright"
+    url: "https://www.njstart.gov/bso/view/search/external/advancedSearchBid.xhtml"
+
+  - name: "Pennsylvania eMarketplace"
+    state: "PA"
+    enabled: true
+    method: "playwright"
+    url: "https://www.emarketplace.state.pa.us/search.aspx"
+
+  - name: "Maryland eMaryland Marketplace Advantage (eMMA)"
+    state: "MD"
+    enabled: true
+    method: "playwright"
+    url: "https://emma.maryland.gov/page.aspx/en/rfp/request_browse_public"
+
+  # ---- ISOs / RTOs (disabled: no scrapable public bid pages) ----
+  - name: "ISO-NE RFP page"
+    state: "ISO-NE"
+    enabled: false
+    method: "requests"
+    url: "https://www.iso-ne.com/system-planning/transmission-planning/competitive-transmission"
+
+  - name: "NYISO procurement / vendor opportunities"
+    state: "NYISO"
+    enabled: false
+    method: "requests"
+    url: "https://www.nyiso.com/vendor-opportunities"
+
+  - name: "PJM RFPs and vendor opportunities"
+    state: "PJM"
+    enabled: false
+    method: "requests"
+    url: "https://www.pjm.com/about-pjm/who-we-are/doing-business.aspx"
+
+  # ---- State energy agencies (disabled: covered by main portals) ----
+  - name: "MA DOER procurements"
+    state: "MA"
+    enabled: false
+    method: "playwright"
+    url: "https://www.mass.gov/info-details/clean-energy-procurements"
+
+  - name: "CT DEEP / PURA procurements"
+    state: "CT"
+    enabled: false   # enable once URL confirmed
+    method: "requests"
+    url: ""
+
+  - name: "NJ BPU clean energy solicitations"
+    state: "NJ"
+    enabled: false
+    method: "requests"
+    url: "https://www.nj.gov/bpu/newsroom/"
+
+# -------------------------------------------------------------
+# RELEVANCE CRITERIA
+# These drive how Claude scores each listing. Edit freely.
+# Based on nine energy consulting practice areas.
+# -------------------------------------------------------------
+relevance:
+  practice_areas:
+    - "Clean Power and Carbon Management"
+    - "Competitive Power Solicitations"
+    - "Electricity and Fuel Procurement Advisory Services"
+    - "Financial Transactions and Due Diligence"
+    - "Gas Supply and Pipeline Infrastructure"
+    - "Market Design and Resource Adequacy"
+    - "Nuclear Advisory Services"
+    - "Regulatory Economics and Litigation Support"
+    - "Transmission Assessments"
+
+  high_value_keywords:
+    - "energy storage"
+    - "battery storage"
+    - "BESS"
+    - "clean energy"
+    - "renewable energy"
+    - "offshore wind"
+    - "solar procurement"
+    - "competitive solicitation"
+    - "power purchase agreement"
+    - "PPA"
+    - "capacity market"
+    - "resource adequacy"
+    - "market design"
+    - "transmission"
+    - "interconnection"
+    - "production cost modeling"
+    - "price forecast"
+    - "load forecasting"
+    - "electricity procurement"
+    - "fuel procurement"
+    - "natural gas"
+    - "pipeline"
+    - "LNG"
+    - "gas supply"
+    - "nuclear"
+    - "rate case"
+    - "regulatory"
+    - "litigation support"
+    - "expert testimony"
+    - "due diligence"
+    - "risk management"
+    - "wholesale market"
+    - "ISO-NE"
+    - "NYISO"
+    - "PJM"
+    - "carbon"
+    - "decarbonization"
+    - "EV charging"
+    - "heat pump"
+    - "electrification"
+    - "Section 83E"
+    - "Section 83C"
+    - "Clean Peak"
+    - "GSESP"
+    - "energy master plan"
+
+  exclude_keywords:
+    - "road"
+    - "highway"
+    - "bridge paving"
+    - "janitorial"
+    - "food service"
+    - "snow removal"
+    - "landscaping"
+    - "security guard"
+    - "uniforms"
+    - "office supplies"
+    - "copier"
+    - "IT hardware"
+    - "furniture"
+
+  # Agencies that almost always post relevant work
+  priority_agencies:
+    - "Department of Energy Resources"
+    - "DOER"
+    - "Board of Public Utilities"
+    - "BPU"
+    - "Department of Public Utilities"
+    - "DPU"
+    - "PURA"
+    - "DEEP"
+    - "NYSERDA"
+    - "Department of Public Service"
+    - "Maine Governor's Energy Office"
+    - "Public Utilities Commission"
+    - "ISO-NE"
+    - "NYISO"
+    - "PJM"

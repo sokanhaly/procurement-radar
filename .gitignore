@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Local secrets (never commit API keys)
+.env
+*.key
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright browser cache (installed in CI fresh each run)
+.playwright/

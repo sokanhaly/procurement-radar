@@ -1,0 +1,53 @@
+{
+  "last_scan": "2026-06-13T14:02:26.662684+00:00",
+  "count": 3,
+  "opportunities": [
+    {
+      "portal": "COMMBUYS (Massachusetts)",
+      "state": "MA",
+      "bid_id": "Bid Solicitation #BD-26-2083-PUR00-PUR01-130519",
+      "title": "Organization NamePentucket Regional School District",
+      "agency": "",
+      "description": "Bid Solicitation #BD-26-2083-PUR00-PUR01-130519 | Bid Solicitation #BD-26-2083-PUR00-PUR01-130519 | Organization NamePentucket Regional School District | Blanket # | Blanket # | BuyerSuzanne Wallace | DescriptionPV System for Pentucket MHS | Bid Opening Date06/24/2026 13:00:00 | Bid Holder List | Awarded Vendor(s) | StatusSent | Alternate Id",
+      "deadline": "2026-06-24",
+      "url": "https://www.commbuys.com/bso/external/bidDetail.sda?docId=BD-26-2083-PUR00-PUR01-130519&external=true&parentUrl=close",
+      "value": "Not specified",
+      "_fp": "6d573181dd493425",
+      "score": "Medium",
+      "why": "This solicitation is for a photovoltaic (solar PV) system procurement at a school district, which relates to clean energy and renewable energy procurement, touching on LAI's Clean Power and Carbon Management and potentially Electricity and Fuel Procurement Advisory Services practice areas.",
+      "practice_area": "Clean Power and Carbon Management"
+    },
+    {
+      "portal": "Vermont Bid Opportunities",
+      "state": "VT",
+      "bid_id": "Agency of Natural Resources, Dept. of Environmental Conserv.",
+      "title": "Agency of Natural Resources, Dept. of Environmental Conserv.",
+      "agency": "",
+      "description": "Agency of Natural Resources, Dept. of Environmental Conserv. | Close Date:7/9/2026 10:00:00 AM",
+      "deadline": "2026-07-09",
+      "url": "https://www.vermontbusinessregistry.com/bidsearch.aspx?type=1",
+      "value": "Not specified",
+      "_fp": "8be710a6f87d5437",
+      "score": "Medium",
+      "why": "A Vermont Department of Environmental Conservation engagement could involve regulatory economics, carbon management, or clean energy advisory work, but the listing provides insufficient detail to confirm a consulting or advisory scope versus equipment, grants, or other non-consulting work.",
+      "practice_area": "Clean Power and Carbon Management",
+      "expired": false
+    },
+    {
+      "portal": "Vermont Bid Opportunities",
+      "state": "VT",
+      "bid_id": "Town of Chester",
+      "title": "Close Date:6/22/2026 4:00:00 PM",
+      "agency": "",
+      "description": "Town of Chester | Close Date:6/22/2026 4:00:00 PM",
+      "deadline": "6/22/2026 4:00:00 PM",
+      "url": "https://www.vermontbusinessregistry.com/bidsearch.aspx?type=1",
+      "value": "Not specified",
+      "_fp": "b6c315c732b17aeb",
+      "score": "Medium",
+      "why": "A Vermont town energy-related solicitation could involve electricity or fuel procurement advisory services, but the listing lacks sufficient detail to confirm a consulting engagement versus equipment or construction work.",
+      "practice_area": "Electricity and Fuel Procurement Advisory Services",
+      "expired": false
+    }
+  ]
+}
