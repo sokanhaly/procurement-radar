@@ -637,6 +637,37 @@ _CUSTOM_HANDLERS = {
 # -------------------------------------------------------------------
 # Orchestration
 # -------------------------------------------------------------------
+def _cleanup_listings(listings):
+    """Post-processing cleanup for all listings. Strips common junk
+    prefixes from bid_id and title fields."""
+    import re
+    cleaned = []
+    for l in listings:
+        bid_id = l.get("bid_id", "")
+        title = l.get("title", "")
+
+        # Strip "Bid Solicitation #" prefix from bid_id (COMMBUYS, NJSTART)
+        if bid_id.startswith("Bid Solicitation #"):
+            bid_id = bid_id.replace("Bid Solicitation #", "").strip()
+
+        # Skip header rows where bid_id is empty after cleanup
+        if l.get("bid_id", "") == "Bid Solicitation #" and not bid_id:
+            continue
+
+        # Strip "Description" prefix from title (COMMBUYS, NJSTART)
+        if title.startswith("Description"):
+            title = title[len("Description"):].strip()
+
+        # Strip "Organization Name" prefix from title (COMMBUYS)
+        if title.startswith("Organization Name"):
+            title = title[len("Organization Name"):].strip()
+
+        l["bid_id"] = bid_id
+        l["title"] = title
+        cleaned.append(l)
+    return cleaned
+
+
 def scrape_all(config):
     """Run every enabled portal. Return a flat list of all listings."""
     all_listings = []
@@ -679,7 +710,7 @@ def scrape_all(config):
             traceback.print_exc()
             # Continue with the next portal; never crash the whole run.
             continue
-    return all_listings
+    return _cleanup_listings(all_listings)
 
 
 if __name__ == "__main__":
