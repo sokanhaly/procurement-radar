@@ -17,13 +17,13 @@ def build_html(opportunities):
     highs = [o for o in opportunities if o.get("score") == "High"]
     meds = [o for o in opportunities if o.get("score") == "Medium"]
     def block(o):
-        val = o.get("value", "Not specified")
-        val_line = f" &middot; {val}" if val and val != "Not specified" else ""
+        bid_id = o.get("bid_id", "")
+        bid_line = f" &middot; {_esc(bid_id)}" if bid_id else ""
         return f"""
         <tr><td style="padding:12px 0;border-bottom:1px solid #e0e0e0;">
           <div style="font-size:15px;font-weight:600;color:#1a1a1a;">{_esc(o.get('title',''))}</div>
           <div style="font-size:13px;color:#555;margin-top:3px;">
-            {_esc(o.get('state',''))} &middot; {_esc(o.get('portal',''))} &middot; Due: {_esc(o.get('deadline','Not specified'))}{val_line}
+            {_esc(o.get('state',''))} &middot; {_esc(o.get('portal',''))} &middot; Due: {_esc(o.get('deadline','Not specified'))}{bid_line}
           </div>
           <div style="font-size:13px;color:#1d5c3e;font-style:italic;margin-top:5px;">{_esc(o.get('why',''))}</div>
           <div style="font-size:12px;margin-top:5px;"><a href="{_esc(o.get('url','#'))}" style="color:#185fa5;">View listing</a></div>

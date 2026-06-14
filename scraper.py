@@ -276,48 +276,49 @@ def parse_nystart(html, portal):
         if not title or len(title) < 5:
             continue
 
-        # Walk up to the card container to find sibling info
-        card = title_div.find_parent("div", class_=lambda c: c and "border" in " ".join(c) if isinstance(c, list) else False)
-        if not card:
-            # Try going up a few levels
-            card = title_div.parent
-            if card:
+        # Walk up multiple levels to find the full card container
+        card = title_div
+        for _ in range(8):
+            if card.parent:
                 card = card.parent
-            if not card:
-                card = title_div
+                card_text = card.get_text(" ", strip=True)
+                # Stop when we find a container that has CR# or Agency info
+                if "Agency:" in card_text or "CR#:" in card_text or "Category:" in card_text:
+                    # But don't go too far (don't grab the whole page)
+                    if len(card_text) < 3000:
+                        break
 
         card_text = card.get_text(" ", strip=True) if card else ""
 
         # Extract agency
         agency = ""
-        agency_div = card.find("div", string=re.compile(r"^Agency:")) if card else None
-        if not agency_div:
-            # Look for the pattern in d-flex divs
-            for d in card.select("div.d-flex") if card else []:
-                t = d.get_text(strip=True)
-                if t.startswith("Agency:"):
-                    agency = t.replace("Agency:", "").strip()
-                    break
+        m = re.search(r"Agency:\s*([^|]+?)(?:\s*(?:Issue date|Division|Category|CR#|Due date|Location|Company|Ad type):|\s*$)", card_text)
+        if m:
+            agency = m.group(1).strip()
 
         # Extract category
         category = ""
-        for d in card.select("div.d-flex") if card else []:
-            t = d.get_text(strip=True)
-            if t.startswith("Category:"):
-                category = t.replace("Category:", "").strip()
-                break
+        m = re.search(r"Category:\s*(.+?)(?:\s*(?:Ad type|Agency|Issue date|Due date|Location|Division):|\s*$)", card_text)
+        if m:
+            category = m.group(1).strip()[:100]
 
         # Extract CR number
         cr_num = ""
-        m = re.search(r"CR#:(\d+)", card_text)
+        m = re.search(r"CR#:\s*(\d+)", card_text)
         if m:
             cr_num = m.group(1)
 
         # Extract due date
         due_date = ""
-        m = re.search(r"Due date:(\d{1,2}/\d{1,2}/\d{4})", card_text)
+        m = re.search(r"Due date:\s*(\d{1,2}/\d{1,2}/\d{4})", card_text)
         if m:
             due_date = m.group(1)
+
+        # Extract issue date
+        issue_date = ""
+        m = re.search(r"Issue date:\s*(\d{1,2}/\d{1,2}/\d{4})", card_text)
+        if m:
+            issue_date = m.group(1)
 
         # Extract note/description
         note = ""
@@ -325,8 +326,10 @@ def parse_nystart(html, portal):
         if note_div:
             note = note_div.get_text(strip=True)[:500]
 
-        # Build URL
-        bid_url = f"https://www.nyscr.ny.gov/Ads/Details/{cr_num}" if cr_num else portal["url"]
+        # Build URL - link to specific ad if we have CR#
+        bid_url = portal["url"]
+        if cr_num:
+            bid_url = f"https://www.nyscr.ny.gov/Ads/Details/{cr_num}"
 
         # Skip duplicates
         if any(l["title"] == title for l in listings):

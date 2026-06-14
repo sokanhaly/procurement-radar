@@ -1,403 +1,194 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Procurement Radar</title>
-    <style>
-      :root {
-        --ink: #14181f;
-        --ink2: #4a5160;
-        --ink3: #8a909c;
-        --line: #e4e6ea;
-        --surface: #ffffff;
-        --bg: #f6f7f9;
-        --navy: #15314f;
-        --navy2: #1f4a78;
-        --high-bg: #e7f2ec;
-        --high-tx: #16633f;
-        --med-bg: #eef3fb;
-        --med-tx: #1f4a78;
-        --warn-bg: #fbf0e4;
-        --warn-tx: #8a4d12;
-      }
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-      body {
-        font-family:
-          -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial,
-          sans-serif;
-        background: var(--bg);
-        color: var(--ink);
-        line-height: 1.5;
-        -webkit-font-smoothing: antialiased;
-      }
-      .wrap {
-        max-width: 1040px;
-        margin: 0 auto;
-        padding: 32px 24px 80px;
-      }
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Procurement Radar</title>
+<style>
+  :root{
+    --ink:#14181f; --ink2:#4a5160; --ink3:#8a909c;
+    --line:#e4e6ea; --surface:#ffffff; --bg:#f6f7f9;
+    --navy:#15314f; --navy2:#1f4a78;
+    --high-bg:#e7f2ec; --high-tx:#16633f;
+    --med-bg:#eef3fb; --med-tx:#1f4a78;
+    --warn-bg:#fbf0e4; --warn-tx:#8a4d12;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:32px 24px 80px}
 
-      header {
-        display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
-        border-bottom: 2px solid var(--navy);
-        padding-bottom: 16px;
-        margin-bottom: 8px;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-      .brand h1 {
-        font-size: 22px;
-        font-weight: 700;
-        letter-spacing: -0.01em;
-        color: var(--navy);
-      }
-      .brand p {
-        font-size: 13px;
-        color: var(--ink2);
-        margin-top: 2px;
-      }
-      .scan-meta {
-        font-size: 12px;
-        color: var(--ink3);
-        text-align: right;
-      }
-      .scan-meta strong {
-        color: var(--ink2);
-        font-weight: 600;
-      }
+  header{display:flex;align-items:flex-end;justify-content:space-between;
+    border-bottom:2px solid var(--navy);padding-bottom:16px;margin-bottom:8px;flex-wrap:wrap;gap:12px}
+  .brand h1{font-size:22px;font-weight:700;letter-spacing:-.01em;color:var(--navy)}
+  .brand p{font-size:13px;color:var(--ink2);margin-top:2px}
+  .scan-meta{font-size:12px;color:var(--ink3);text-align:right}
+  .scan-meta strong{color:var(--ink2);font-weight:600}
 
-      .stats {
-        display: flex;
-        gap: 12px;
-        margin: 24px 0 8px;
-        flex-wrap: wrap;
-      }
-      .stat {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 14px 18px;
-        min-width: 120px;
-        flex: 1;
-      }
-      .stat .num {
-        font-size: 26px;
-        font-weight: 700;
-        color: var(--navy);
-      }
-      .stat .lbl {
-        font-size: 12px;
-        color: var(--ink3);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-top: 2px;
-      }
+  .stats{display:flex;gap:12px;margin:24px 0 8px;flex-wrap:wrap}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:14px 18px;min-width:120px;flex:1}
+  .stat .num{font-size:26px;font-weight:700;color:var(--navy)}
+  .stat .lbl{font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
 
-      .controls {
-        display: flex;
-        gap: 8px;
-        margin: 20px 0 16px;
-        flex-wrap: wrap;
-        align-items: center;
-      }
-      .filter-btn {
-        font-size: 13px;
-        padding: 6px 14px;
-        border: 1px solid var(--line);
-        background: var(--surface);
-        border-radius: 20px;
-        cursor: pointer;
-        color: var(--ink2);
-        transition: all 0.12s;
-      }
-      .filter-btn:hover {
-        border-color: var(--navy2);
-      }
-      .filter-btn.active {
-        background: var(--navy);
-        color: #fff;
-        border-color: var(--navy);
-      }
-      .search {
-        margin-left: auto;
-        font-size: 13px;
-        padding: 7px 12px;
-        border: 1px solid var(--line);
-        border-radius: 8px;
-        min-width: 200px;
-        background: var(--surface);
-      }
-      .search:focus {
-        outline: none;
-        border-color: var(--navy2);
-      }
+  .controls{display:flex;gap:8px;margin:20px 0 16px;flex-wrap:wrap;align-items:center}
+  .filter-btn{font-size:13px;padding:6px 14px;border:1px solid var(--line);background:var(--surface);
+    border-radius:20px;cursor:pointer;color:var(--ink2);transition:all .12s}
+  .filter-btn:hover{border-color:var(--navy2)}
+  .filter-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .search{margin-left:auto;font-size:13px;padding:7px 12px;border:1px solid var(--line);
+    border-radius:8px;min-width:200px;background:var(--surface)}
+  .search:focus{outline:none;border-color:var(--navy2)}
 
-      .opp {
-        background: var(--surface);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 16px 18px;
-        margin-bottom: 10px;
-        transition: border-color 0.12s;
-      }
-      .opp:hover {
-        border-color: #cdd2da;
-      }
-      .opp-top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 12px;
-      }
-      .opp-title {
-        font-size: 15px;
-        font-weight: 600;
-        color: var(--ink);
-      }
-      .pill {
-        flex-shrink: 0;
-        font-size: 11px;
-        font-weight: 600;
-        padding: 3px 10px;
-        border-radius: 20px;
-        white-space: nowrap;
-      }
-      .pill.High {
-        background: var(--high-bg);
-        color: var(--high-tx);
-      }
-      .pill.Medium {
-        background: var(--med-bg);
-        color: var(--med-tx);
-      }
-      .opp-meta {
-        font-size: 12.5px;
-        color: var(--ink2);
-        margin-top: 6px;
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-      }
-      .opp-meta .sep {
-        color: var(--ink3);
-      }
-      .opp-why {
-        font-size: 13px;
-        color: var(--high-tx);
-        font-style: italic;
-        margin-top: 8px;
-      }
-      .opp-foot {
-        margin-top: 10px;
-        display: flex;
-        gap: 14px;
-        align-items: center;
-      }
-      .opp-foot a {
-        font-size: 12.5px;
-        color: var(--navy2);
-        text-decoration: none;
-        font-weight: 500;
-      }
-      .opp-foot a:hover {
-        text-decoration: underline;
-      }
-      .tag {
-        font-size: 11px;
-        color: var(--ink3);
-        background: var(--bg);
-        border: 1px solid var(--line);
-        padding: 2px 8px;
-        border-radius: 6px;
-      }
+  .opp{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:16px 18px;margin-bottom:10px;transition:border-color .12s}
+  .opp:hover{border-color:#cdd2da}
+  .opp-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+  .opp-title{font-size:15px;font-weight:600;color:var(--ink)}
+  .pill{flex-shrink:0;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;white-space:nowrap}
+  .pill.High{background:var(--high-bg);color:var(--high-tx)}
+  .pill.Medium{background:var(--med-bg);color:var(--med-tx)}
+  .opp-meta{font-size:12.5px;color:var(--ink2);margin-top:6px;display:flex;gap:8px;flex-wrap:wrap}
+  .opp-meta .sep{color:var(--ink3)}
+  .opp-why{font-size:13px;color:var(--high-tx);font-style:italic;margin-top:8px}
+  .opp-foot{margin-top:10px;display:flex;gap:14px;align-items:center}
+  .opp-foot a{font-size:12.5px;color:var(--navy2);text-decoration:none;font-weight:500}
+  .opp-foot a:hover{text-decoration:underline}
+  .tag{font-size:11px;color:var(--ink3);background:var(--bg);border:1px solid var(--line);
+    padding:2px 8px;border-radius:6px}
 
-      .empty {
-        text-align: center;
-        padding: 60px 20px;
-        color: var(--ink3);
-      }
-      .empty h3 {
-        font-size: 16px;
-        color: var(--ink2);
-        font-weight: 600;
-        margin-bottom: 6px;
-      }
+  .empty{text-align:center;padding:60px 20px;color:var(--ink3)}
+  .empty h3{font-size:16px;color:var(--ink2);font-weight:600;margin-bottom:6px}
 
-      footer {
-        margin-top: 40px;
-        padding-top: 16px;
-        border-top: 1px solid var(--line);
-        font-size: 12px;
-        color: var(--ink3);
-      }
+  footer{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);
+    font-size:12px;color:var(--ink3)}
 
-      @media (max-width: 560px) {
-        .opp-top {
-          flex-direction: column;
-        }
-        .search {
-          margin-left: 0;
-          width: 100%;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="wrap">
-      <header>
-        <div class="brand">
-          <h1>Procurement Radar</h1>
-          <p>Northeast states procurement monitoring</p>
-        </div>
-        <div class="scan-meta" id="scanMeta">Loading...</div>
-      </header>
+  @media(max-width:560px){
+    .opp-top{flex-direction:column}
+    .search{margin-left:0;width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
 
-      <div class="stats" id="stats"></div>
-
-      <div class="controls">
-        <button class="filter-btn active" data-f="all">All</button>
-        <button class="filter-btn" data-f="High">High</button>
-        <button class="filter-btn" data-f="Medium">Medium</button>
-        <input
-          class="search"
-          id="search"
-          type="text"
-          placeholder="Search title, agency, state..."
-        />
-      </div>
-
-      <div id="list"></div>
-
-      <footer>
-        Covers ME, VT, MA, RI, CT, NY, NJ, PA and MD. Data refreshes
-        automatically on each scheduled scan. This page reads the latest results
-        file committed to the repository.
-      </footer>
+  <header>
+    <div class="brand">
+      <h1>Procurement Radar</h1>
+      <p>Northeast states procurement monitoring</p>
     </div>
+    <div class="scan-meta" id="scanMeta">Loading...</div>
+  </header>
 
-    <script>
-      let DATA = { opportunities: [], last_scan: null };
-      let activeFilter = "all";
-      let searchTerm = "";
+  <div class="stats" id="stats"></div>
 
-      async function load() {
-        try {
-          const res = await fetch("results.json?_=" + Date.now());
-          DATA = await res.json();
-        } catch (e) {
-          DATA = { opportunities: [], last_scan: null };
-        }
-        render();
-      }
+  <div class="controls">
+    <button class="filter-btn active" data-f="all">All</button>
+    <button class="filter-btn" data-f="High">High</button>
+    <button class="filter-btn" data-f="Medium">Medium</button>
+    <input class="search" id="search" type="text" placeholder="Search title, agency, state...">
+  </div>
 
-      function fmtDate(iso) {
-        if (!iso) return "never";
-        const d = new Date(iso);
-        return d.toLocaleString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-          hour: "numeric",
-          minute: "2-digit",
-        });
-      }
+  <div id="list"></div>
 
-      function render() {
-        const opps = DATA.opportunities || [];
-        document.getElementById("scanMeta").innerHTML =
-          "Last scan<br><strong>" + fmtDate(DATA.last_scan) + "</strong>";
+  <footer>
+    Covers ME, NH, VT, MA, RI, CT, NY, NJ, PA and MD.
+    Data refreshes automatically on each scheduled scan. This page reads the latest results file committed to the repository.
+  </footer>
 
-        const high = opps.filter((o) => o.score === "High").length;
-        const med = opps.filter((o) => o.score === "Medium").length;
-        document.getElementById("stats").innerHTML = `
+</div>
+
+<script>
+let DATA = {opportunities:[], last_scan:null};
+let activeFilter = "all";
+let searchTerm = "";
+
+async function load(){
+  try{
+    const res = await fetch("results.json?_=" + Date.now());
+    DATA = await res.json();
+  }catch(e){
+    DATA = {opportunities:[], last_scan:null};
+  }
+  render();
+}
+
+function fmtDate(iso){
+  if(!iso) return "never";
+  const d = new Date(iso);
+  return d.toLocaleString("en-US",{month:"short",day:"numeric",year:"numeric",hour:"numeric",minute:"2-digit"});
+}
+
+function render(){
+  const opps = DATA.opportunities || [];
+  document.getElementById("scanMeta").innerHTML =
+    "Last scan<br><strong>" + fmtDate(DATA.last_scan) + "</strong>";
+
+  const high = opps.filter(o=>o.score==="High").length;
+  const med = opps.filter(o=>o.score==="Medium").length;
+  document.getElementById("stats").innerHTML = `
     <div class="stat"><div class="num">${opps.length}</div><div class="lbl">Tracked</div></div>
     <div class="stat"><div class="num">${high}</div><div class="lbl">High relevance</div></div>
     <div class="stat"><div class="num">${med}</div><div class="lbl">Medium relevance</div></div>`;
 
-        let filtered = opps.filter((o) => {
-          if (activeFilter !== "all" && o.score !== activeFilter) return false;
-          if (searchTerm) {
-            const blob = (
-              o.title +
-              " " +
-              o.agency +
-              " " +
-              o.state +
-              " " +
-              o.portal
-            ).toLowerCase();
-            if (!blob.includes(searchTerm)) return false;
-          }
-          return true;
-        });
+  let filtered = opps.filter(o=>{
+    if(activeFilter!=="all" && o.score!==activeFilter) return false;
+    if(searchTerm){
+      const blob = (o.title+" "+o.agency+" "+o.state+" "+o.portal).toLowerCase();
+      if(!blob.includes(searchTerm)) return false;
+    }
+    return true;
+  });
 
-        const list = document.getElementById("list");
-        if (!filtered.length) {
-          list.innerHTML = `<div class="empty"><h3>No opportunities to show</h3>
+  const list = document.getElementById("list");
+  if(!filtered.length){
+    list.innerHTML = `<div class="empty"><h3>No opportunities to show</h3>
       <p>Either no relevant bids were found in the last scan, or your filters exclude them all.</p></div>`;
-          return;
-        }
+    return;
+  }
 
-        list.innerHTML = filtered
-          .map((o) => {
-            const val =
-              o.value && o.value !== "Not specified"
-                ? `<span class="sep">&middot;</span> ${esc(o.value)}`
-                : "";
-            const area =
-              o.practice_area && o.practice_area !== "none"
-                ? `<span class="tag">${esc(o.practice_area)}</span>`
-                : "";
-            return `<div class="opp">
+  list.innerHTML = filtered.map(o=>{
+    const val = (o.value && o.value!=="Not specified") ? `<span class="sep">&middot;</span> ${esc(o.value)}` : "";
+    const area = (o.practice_area && o.practice_area!=="none") ? `<span class="tag">${esc(o.practice_area)}</span>` : "";
+    return `<div class="opp">
       <div class="opp-top">
-        <div class="opp-title">${esc(o.title || "Untitled")}</div>
+        <div class="opp-title">${esc(o.title||"Untitled")}</div>
         <span class="pill ${esc(o.score)}">${esc(o.score)}</span>
       </div>
       <div class="opp-meta">
-        <span>${esc(o.state || "")}</span><span class="sep">&middot;</span>
-        <span>${esc(o.portal || "")}</span><span class="sep">&middot;</span>
-        <span>Due ${esc(o.deadline || "Not specified")}</span> ${val}
+        <span>${esc(o.state||"")}</span><span class="sep">&middot;</span>
+        <span>${esc(o.portal||"")}</span><span class="sep">&middot;</span>
+        <span>Due ${esc(o.deadline||"Not specified")}</span> ${val}
+        ${o.bid_id?`<span class="sep">&middot;</span><span>${esc(o.bid_id)}</span>`:""}
       </div>
-      ${o.why ? `<div class="opp-why">${esc(o.why)}</div>` : ""}
+      ${o.why?`<div class="opp-why">${esc(o.why)}</div>`:""}
       <div class="opp-foot">
-        ${o.url ? `<a href="${esc(o.url)}" target="_blank" rel="noopener">View listing &rarr;</a>` : ""}
+        ${o.url?`<a href="${esc(o.url)}" target="_blank" rel="noopener">View listing &rarr;</a>`:""}
         ${area}
       </div>
     </div>`;
-          })
-          .join("");
-      }
+  }).join("");
+}
 
-      function esc(s) {
-        return String(s == null ? "" : s)
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;");
-      }
+function esc(s){
+  return String(s==null?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
 
-      document.querySelectorAll(".filter-btn").forEach((b) => {
-        b.addEventListener("click", () => {
-          document
-            .querySelectorAll(".filter-btn")
-            .forEach((x) => x.classList.remove("active"));
-          b.classList.add("active");
-          activeFilter = b.dataset.f;
-          render();
-        });
-      });
-      document.getElementById("search").addEventListener("input", (e) => {
-        searchTerm = e.target.value.toLowerCase().trim();
-        render();
-      });
+document.querySelectorAll(".filter-btn").forEach(b=>{
+  b.addEventListener("click",()=>{
+    document.querySelectorAll(".filter-btn").forEach(x=>x.classList.remove("active"));
+    b.classList.add("active");
+    activeFilter = b.dataset.f;
+    render();
+  });
+});
+document.getElementById("search").addEventListener("input",e=>{
+  searchTerm = e.target.value.toLowerCase().trim();
+  render();
+});
 
-      load();
-    </script>
-  </body>
+load();
+</script>
+</body>
 </html>

@@ -83,7 +83,7 @@ Also Low: anything clearly about {excludes}.
 Helpful keywords (context, not sufficient alone): {keywords}
 
 Return ONLY valid JSON, no markdown:
-{{"score": "High|Medium|Low", "why": "one sentence describing what the project or opportunity is about in plain language", "practice_area": "matched area or none", "deadline": "extracted deadline or Not specified", "value": "extracted dollar value or Not specified"}}
+{{"score": "High|Medium|Low", "why": "one sentence naming the practice area and the consulting service involved", "practice_area": "matched area or none", "deadline": "extracted deadline or Not specified", "value": "extracted dollar value or Not specified"}}
 
 LISTING:
 Portal: {listing.get('portal','')}
@@ -126,7 +126,11 @@ def score_new_listings(new_listings, relevance):
     for i, listing in enumerate(new_listings, 1):
         print(f"    scoring {i}/{len(new_listings)}: {listing.get('title','')[:50]}")
         verdict = score_listing(client, listing, relevance)
-        deadline = verdict.get("deadline", listing.get("deadline", ""))
+        deadline = verdict.get("deadline", "")
+        parser_deadline = listing.get("deadline", "")
+        # Prefer parser's extracted date if Claude returned nothing useful
+        if not deadline or deadline == "Not specified":
+            deadline = parser_deadline if parser_deadline else "Not specified"
         listing.update({
             "score": verdict.get("score", "Low"),
             "why": verdict.get("why", ""),
