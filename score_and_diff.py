@@ -83,7 +83,7 @@ Also Low: anything clearly about {excludes}.
 Helpful keywords (context, not sufficient alone): {keywords}
 
 Return ONLY valid JSON, no markdown:
-{{"score": "High|Medium|Low", "why": "one sentence naming the practice area and the consulting service involved", "practice_area": "matched area or none", "deadline": "extracted deadline or Not specified", "value": "extracted dollar value or Not specified"}}
+{{"score": "High|Medium|Low", "why": "one sentence describing what the project or opportunity is about in plain language", "practice_area": "matched area or none", "deadline": "extracted deadline or Not specified", "value": "extracted dollar value or Not specified"}}
 
 LISTING:
 Portal: {listing.get('portal','')}
