@@ -77,21 +77,28 @@ def fetch_with_playwright(portal):
 # -------------------------------------------------------------------
 def fetch_ct_iframe(portal):
     """CT bids live inside an iframe from webprocure.proactiscloud.com.
-    Navigate directly to the iframe source to get the actual bid data."""
+    Navigate directly to the iframe source and show all solicitations."""
     from playwright.sync_api import sync_playwright
 
+    # Use the "View All" URL with wildcard search to get all public bids
     iframe_url = (
-        "https://webprocure.proactiscloud.com/wp-web-public/#/bidboard/search"
-        "?&customerid=51"
-        "&loginurl=https://portal.ct.gov/DAS/CTSource/Login"
-        "&oid=-1"
+        "https://webprocure.proactiscloud.com/wp-web-public/"
+        "#/bidboard/search?searchterm=*&customerid=51"
     )
     html = ""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page()
         page.goto(iframe_url, timeout=60000, wait_until="networkidle")
-        page.wait_for_timeout(5000)
+        page.wait_for_timeout(8000)
+        # Try to expand results per page if there's an option
+        try:
+            per_page = page.locator("select[aria-label*='per page'], select[class*='page-size']")
+            if per_page.count() > 0:
+                per_page.first.select_option(value="100")
+                page.wait_for_timeout(5000)
+        except Exception:
+            pass
         html = page.content()
         browser.close()
     return html
@@ -171,8 +178,8 @@ def fetch_pa_emarketplace(portal):
 
 
 def fetch_nystart(portal):
-    """NYSTART Contract Reporter search page. Navigate to the search
-    URL and wait for results to load."""
+    """NYSTART Contract Reporter search page. Click '50' to show more
+    results, then extract the page content."""
     from playwright.sync_api import sync_playwright
 
     html = ""
@@ -181,11 +188,11 @@ def fetch_nystart(portal):
         page = browser.new_page()
         page.goto(portal["url"], timeout=60000, wait_until="networkidle")
         page.wait_for_timeout(5000)
-        # Try clicking Search if there's a button
+        # Click "50" in the display count selector to show more results
         try:
-            search_btn = page.locator("input[value='Search'], button:has-text('Search'), a:has-text('Search')")
-            if search_btn.count() > 0:
-                search_btn.first.click()
+            fifty_btn = page.locator("text=50").first
+            if fifty_btn.is_visible():
+                fifty_btn.click()
                 page.wait_for_timeout(5000)
         except Exception:
             pass
@@ -246,6 +253,97 @@ def parse_vt(html, portal):
             "agency": agency,
             "description": f"{title} | {agency} | Close: {close_date}",
             "deadline": close_date,
+            "url": bid_url,
+            "value": "",
+        })
+
+    return listings
+
+
+def parse_nystart(html, portal):
+    """Custom parser for NYS Contract Reporter. Bids are rendered as
+    div cards with title in bg-primary divs, agency/category/dates
+    in nested d-flex divs."""
+    import re
+    soup = BeautifulSoup(html, "html.parser")
+    listings = []
+
+    # Title divs have these classes
+    title_divs = soup.select("div.bg-primary.text-light.fs-5")
+
+    for title_div in title_divs:
+        title = title_div.get_text(strip=True)
+        if not title or len(title) < 5:
+            continue
+
+        # Walk up to the card container to find sibling info
+        card = title_div.find_parent("div", class_=lambda c: c and "border" in " ".join(c) if isinstance(c, list) else False)
+        if not card:
+            # Try going up a few levels
+            card = title_div.parent
+            if card:
+                card = card.parent
+            if not card:
+                card = title_div
+
+        card_text = card.get_text(" ", strip=True) if card else ""
+
+        # Extract agency
+        agency = ""
+        agency_div = card.find("div", string=re.compile(r"^Agency:")) if card else None
+        if not agency_div:
+            # Look for the pattern in d-flex divs
+            for d in card.select("div.d-flex") if card else []:
+                t = d.get_text(strip=True)
+                if t.startswith("Agency:"):
+                    agency = t.replace("Agency:", "").strip()
+                    break
+
+        # Extract category
+        category = ""
+        for d in card.select("div.d-flex") if card else []:
+            t = d.get_text(strip=True)
+            if t.startswith("Category:"):
+                category = t.replace("Category:", "").strip()
+                break
+
+        # Extract CR number
+        cr_num = ""
+        m = re.search(r"CR#:(\d+)", card_text)
+        if m:
+            cr_num = m.group(1)
+
+        # Extract due date
+        due_date = ""
+        m = re.search(r"Due date:(\d{1,2}/\d{1,2}/\d{4})", card_text)
+        if m:
+            due_date = m.group(1)
+
+        # Extract note/description
+        note = ""
+        note_div = card.select_one("div.alert-warning") if card else None
+        if note_div:
+            note = note_div.get_text(strip=True)[:500]
+
+        # Build URL
+        bid_url = f"https://www.nyscr.ny.gov/Ads/Details/{cr_num}" if cr_num else portal["url"]
+
+        # Skip duplicates
+        if any(l["title"] == title for l in listings):
+            continue
+
+        description = f"{title} | {agency} | {category}"
+        if note:
+            description += f" | {note}"
+
+        listings.append({
+            "portal": portal["name"],
+            "state": portal["state"],
+            "bid_id": cr_num,
+            "title": title[:200],
+            "agency": agency,
+            "description": description[:1000],
+            "deadline": due_date,
             "url": bid_url,
             "value": "",
         })
@@ -529,7 +627,7 @@ _CUSTOM_HANDLERS = {
     "NJSTART (New Jersey)": (fetch_njstart, None),   # custom fetch, generic parse
     "Maryland eMaryland Marketplace Advantage (eMMA)": (fetch_md_emma, None),
     "Pennsylvania eMarketplace": (fetch_pa_emarketplace, None),
-    "NYSTART / NYS Contract Reporter": (fetch_nystart, None),
+    "NYSTART / NYS Contract Reporter": (fetch_nystart, parse_nystart),
 }
 
 
