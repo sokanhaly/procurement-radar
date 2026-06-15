@@ -72,18 +72,30 @@ The firm's nine consulting practice areas:
 
 Score how well this listing matches the firm's CONSULTING services. The central test: is the buyer hiring a consultant, advisor, analyst, expert witness, or study author for energy, power, gas, or utility-related work?
 
-Score High only if the listing is clearly a CONSULTING or ADVISORY engagement aligned with a practice area above (e.g. energy procurement advisory, market analysis, resource adequacy study, rate case support, expert testimony, production cost modeling, due diligence, feasibility analysis, transmission assessment).
+STRICT SCORING RULES:
 
-Score Medium if it is energy or utility related and plausibly involves analysis or advisory work, but the consulting angle is partial or unclear.
+Score High ONLY if BOTH conditions are met:
+  1. The project scope is clearly about energy, power, gas, utility rates, transmission, carbon, renewable energy, or fuel procurement topics
+  2. The work type is consulting, advisory, analysis, modeling, expert testimony, due diligence, or feasibility study
 
-Score Low if it is equipment purchase, installation, construction, hardware supply, facility maintenance, or any non-consulting procurement, EVEN IF it mentions solar, energy, or power. A school buying solar panels is Low. A state hiring an advisor to evaluate solar procurement is High.
+Score Medium ONLY if the project scope appears energy or utility related AND plausibly involves advisory work, but details are limited.
 
-Also Low: anything clearly about {excludes}.
+Score Low in ALL of these cases:
+  - The agency is an energy/utility authority BUT the project is administrative, IT, facilities, maintenance, HR, legal admin, fleet, janitorial, or general operations (e.g. a power authority hiring an IT consultant is Low)
+  - Equipment purchase, installation, construction, hardware supply, or facility maintenance, even if energy-related
+  - The category is "Administrative & Technical", "Information Technology", "Facilities Maintenance", or "Transportation". These are ALWAYS Low regardless of agency or title.
+  - Any non-consulting procurement
+  - Anything clearly about {excludes}
+  - The description is missing, vague, contains junk text, or only shows a login prompt
+
+IMPORTANT: The agency name alone does NOT determine relevance. A power authority buying office furniture or upgrading IT systems is Low. Only the actual project scope matters.
+
+WHEN IN DOUBT, ALWAYS SCORE LOW: If you cannot confirm from the listing text that the project is specifically about energy, power, gas, utility, or fuel consulting, score Low. Never assume or speculate. Medium requires clear evidence of energy-related advisory work.
 
 Helpful keywords (context, not sufficient alone): {keywords}
 
 Return ONLY valid JSON, no markdown:
-{{"score": "High|Medium|Low", "why": "one sentence naming the practice area and the consulting service involved", "practice_area": "matched area or none", "deadline": "extracted deadline or Not specified", "value": "extracted dollar value or Not specified"}}
+{{"score": "High|Medium|Low", "why": "one sentence stating ONLY what the listing actually says the project is about. Do not speculate, interpret, or add what it might involve. State only facts from the listing.", "practice_area": "matched area or none", "deadline": "extracted deadline or Not specified", "value": "extracted dollar value or Not specified"}}
 
 LISTING:
 Portal: {listing.get('portal','')}
@@ -125,6 +137,7 @@ def score_new_listings(new_listings, relevance):
     scored = []
     for i, listing in enumerate(new_listings, 1):
         print(f"    scoring {i}/{len(new_listings)}: {listing.get('title','')[:50]}")
+        import time; time.sleep(0.5)
         verdict = score_listing(client, listing, relevance)
         deadline = verdict.get("deadline", "")
         parser_deadline = listing.get("deadline", "")

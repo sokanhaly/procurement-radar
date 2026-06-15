@@ -1,10 +1,10 @@
 name: Procurement Radar Scan
 # When this runs:
-#   - Daily at 12:00 UTC (7am ET winter / 8am ET summer)
+#   - Weekly on Monday at 12:00 UTC (8am ET summer / 7am ET winter)
 #   - Manually, anytime, via the "Run workflow" button in the Actions tab
 on:
   schedule:
-    - cron: "0 12 * * *"
+    - cron: "0 12 * * 1"
   workflow_dispatch: {}
 jobs:
   scan:
@@ -27,6 +27,8 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          NYSTART_USERNAME: ${{ secrets.NYSTART_USERNAME }}
+          NYSTART_PASSWORD: ${{ secrets.NYSTART_PASSWORD }}
         run: python main.py
       - name: Commit updated results and snapshot
         run: |

@@ -1,22 +1,5 @@
 {
-  "last_scan": "2026-06-14T10:11:26.210358+00:00",
-  "count": 1,
-  "opportunities": [
-    {
-      "portal": "NYSTART / NYS Contract Reporter",
-      "state": "NY",
-      "bid_id": "2135628",
-      "title": "RISK AND RESILIENCE CONSULTING SERVICES",
-      "agency": "Power Authority of New York",
-      "description": "RISK AND RESILIENCE CONSULTING SERVICES | Power Authority of New York | Administrative & Technical",
-      "deadline": "7/9/2026",
-      "url": "https://www.nyscr.ny.gov/Ads/Details/2135628",
-      "value": "Not specified",
-      "_fp": "a5b34407bff3e4ce",
-      "score": "High",
-      "why": "NYPA is procuring risk and resilience consulting services, which aligns with regulatory economics, financial transactions, or market design advisory work for a major state power authority.",
-      "practice_area": "Regulatory Economics and Litigation Support",
-      "expired": false
-    }
-  ]
+  "last_scan": "2026-06-15T09:06:16.825528+00:00",
+  "count": 0,
+  "opportunities": []
 }

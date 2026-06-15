@@ -48,8 +48,8 @@ portals:
   - name: "Maine Division of Procurement Services"
     state: "ME"
     enabled: true
-    method: "requests"
-    url: "https://www.maine.gov/dafs/bbm/procurementservices/vendors/rfps"
+    method: "playwright"
+    url: "https://www.maine.gov/dafs/bbm/procurementservices/vendors/vendor-self-service-system"
 
   - name: "New Hampshire NHFirst / Bid Opportunities"
     state: "NH"

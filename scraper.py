@@ -178,8 +178,8 @@ def fetch_pa_emarketplace(portal):
 
 
 def fetch_nystart(portal):
-    """NYSTART Contract Reporter search page. Click '50' to show more
-    results, then extract the page content."""
+    """NYSTART Contract Reporter. Go to search page and click '50'
+    to show more results. Category pre-filter in parser handles relevance."""
     from playwright.sync_api import sync_playwright
 
     html = ""
@@ -188,7 +188,8 @@ def fetch_nystart(portal):
         page = browser.new_page()
         page.goto(portal["url"], timeout=60000, wait_until="networkidle")
         page.wait_for_timeout(5000)
-        # Click "50" in the display count selector to show more results
+
+        # Click "50" to show more results
         try:
             fifty_btn = page.locator("text=50").first
             if fifty_btn.is_visible():
@@ -196,6 +197,7 @@ def fetch_nystart(portal):
                 page.wait_for_timeout(5000)
         except Exception:
             pass
+
         html = page.content()
         browser.close()
     return html
@@ -330,6 +332,11 @@ def parse_nystart(html, portal):
         bid_url = portal["url"]
         if cr_num:
             bid_url = f"https://www.nyscr.ny.gov/Ads/Details/{cr_num}"
+
+        # PRE-FILTER: Only keep "Utilities & Green Energies" category
+        RELEVANT_CATEGORIES = {"utilities & green energies"}
+        if category.lower() not in RELEVANT_CATEGORIES:
+            continue
 
         # Skip duplicates
         if any(l["title"] == title for l in listings):
@@ -668,6 +675,56 @@ def _cleanup_listings(listings):
     return cleaned
 
 
+def _enrich_with_details(listings):
+    """For COMMBUYS and NJSTART listings, fetch each bid's detail page
+    to get the full description. Uses a single browser session."""
+    from playwright.sync_api import sync_playwright
+
+    periscope = []
+    for l in listings:
+        url = l.get("url", "")
+        if ("commbuys.com/bso/external/bidDetail" in url or
+            "njstart.gov/bso/external/bidDetail" in url):
+            periscope.append(l)
+
+    if periscope:
+        print(f"    Fetching details for {len(periscope)} COMMBUYS/NJSTART listings...")
+        try:
+            with sync_playwright() as p:
+                browser = p.chromium.launch(headless=True)
+                page = browser.new_page()
+                for l in periscope:
+                    try:
+                        page.goto(l["url"], timeout=30000, wait_until="networkidle")
+                        page.wait_for_timeout(2000)
+                        content = page.content()
+                        soup = BeautifulSoup(content, "html.parser")
+                        desc_parts = []
+                        for selector in ["div.bidDetailContent", "div#bidDetail",
+                                         "div[class*='detail']", "div[class*='description']",
+                                         "td[class*='detail']", "div.content"]:
+                            elems = soup.select(selector)
+                            for elem in elems:
+                                text = elem.get_text(" ", strip=True)
+                                if len(text) > 50 and len(text) < 5000:
+                                    desc_parts.append(text)
+                        if not desc_parts:
+                            for td in soup.select("td"):
+                                text = td.get_text(" ", strip=True)
+                                if len(text) > 100 and len(text) < 3000:
+                                    desc_parts.append(text)
+                        if desc_parts:
+                            best_desc = max(desc_parts, key=len)
+                            l["description"] = best_desc[:2000]
+                    except Exception:
+                        pass
+                browser.close()
+        except Exception as e:
+            print(f"    Detail enrichment error: {e}")
+
+    return listings
+
+
 def scrape_all(config):
     """Run every enabled portal. Return a flat list of all listings."""
     all_listings = []
@@ -710,6 +767,7 @@ def scrape_all(config):
             traceback.print_exc()
             # Continue with the next portal; never crash the whole run.
             continue
+    all_listings = _enrich_with_details(all_listings)
     return _cleanup_listings(all_listings)
 
 
